@@ -1,3 +1,4 @@
+
 name: daily-supply
 
 # 매일 아침 8시(한국시간)에 전날까지의 전력수급실적을 받아 Parquet에 반영한다.
@@ -5,18 +6,23 @@ name: daily-supply
 on:
   schedule:
     - cron: "0 23 * * *"
-  workflow_dispatch:   # Actions 탭의 "Run workflow" 버튼으로 수동 실행
+  workflow_dispatch:
 
 permissions:
-  contents: write      # 받은 데이터를 저장소에 커밋하려면 필요
+  contents: write
 
 concurrency:
-  group: data-update   # 일별/월별 작업이 동시에 push 하지 않도록 순서대로 실행
+  group: data-update
   cancel-in-progress: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: "(11.01) energy-dashboard/(11.01) energy-dashboard"
+
     steps:
       - uses: actions/checkout@v4
 
@@ -24,8 +30,10 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: "(11.01) energy-dashboard/(11.01) energy-dashboard/requirements.txt"
 
-      - run: pip install -r requirements.txt
+      - name: Python 패키지 설치
+        run: pip install -r requirements.txt
 
       - name: 일별 전력수급실적 받기
         run: python scripts/fetch_daily.py
