@@ -36,7 +36,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: 일별 전력수급실적 받기
-        run: python scripts/fetch_daily.py
+        run: python scripts/fetch_today.py
 
       - name: 바뀐 데이터가 있으면 커밋
         run: |
